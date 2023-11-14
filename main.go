@@ -9,7 +9,7 @@ import (
 	"html/template"
 	"github.com/dgrijalva/jwt-go"
     "time"
-    "TutoringSite/authentification/auth"
+    "github.com/MihaiSirbu/TutoringSite/authentication/auth"
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
