@@ -1,4 +1,4 @@
-module Gorilla
+module github.com/MihaiSirbu/TutoringSite
 
 go 1.21.4
 

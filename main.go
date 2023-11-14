@@ -9,7 +9,7 @@ import (
 	"html/template"
 	"github.com/dgrijalva/jwt-go"
     "time"
-    "authentication/auth"
+    "TutoringSite/authentification/auth"
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -58,7 +58,7 @@ func RunServer(port int) {
 	router.HandleFunc("/", homePage).Methods("GET")
 	router.HandleFunc("/lessons", lessonsPage).Methods("GET")
 	router.HandleFunc("/login", loginPage).Methods("GET")
-	router.HandleFunc("/login", loginAuth).Methods("POST")
+	router.HandleFunc("/login", auth.loginAuth).Methods("POST")
 
 
 	log.Println("Server starting on port:",port)

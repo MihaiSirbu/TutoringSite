@@ -1,5 +1,16 @@
 package auth
-
+import (
+	"encoding/json"
+	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
+	"log"
+	"net/http"
+	"html/template"
+	"github.com/dgrijalva/jwt-go"
+    "time"
+    
+    
+)
 
 
 type UserCredentials struct {
