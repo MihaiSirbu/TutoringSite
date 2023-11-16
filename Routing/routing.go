@@ -107,11 +107,18 @@ func UpdateLesson(w http.ResponseWriter, r *http.Request){
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(lesson)
 }
-/*
-func DeleteLesson(db *gorm.DB){
-	initializers.DB.Delete(&alesson)
+
+func DeleteLesson(w http.ResponseWriter, r *http.Request){
+	// probably needs some checks as well as error responses
+	vars := mux.Vars(r)
+    id := vars["id"]
+	initializers.DB.Delete(&models.Lesson{}, id)
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    
 }
-*/
+
 
 func GetLesson(w http.ResponseWriter, r *http.Request){
 	
@@ -159,10 +166,15 @@ func RunServer(port int) {
 	router := mux.NewRouter()
 	// get methods
 	router.HandleFunc("/", homePage).Methods("GET")
+
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
 	router.HandleFunc("/lessons", GetAllLessons).Methods("GET")
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
 	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
+	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
+
+
+
 	router.HandleFunc("/login", loginPage).Methods("GET")
 	//router.HandleFunc("/login", loginAuth).Methods("POST")
 
