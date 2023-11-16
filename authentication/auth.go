@@ -1,4 +1,5 @@
 package auth
+
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -9,7 +10,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
     "time"
     
-    
+	
+
 )
 
 
@@ -18,7 +20,7 @@ type UserCredentials struct {
     Password string `json:"password"`
 }
 
-func loginAuth(w http.ResponseWriter, r *http.Request) {
+func LoginAuth(w http.ResponseWriter, r *http.Request) {
     var creds UserCredentials
     // Decode the JSON body into the `creds` struct.
     err := json.NewDecoder(r.Body).Decode(&creds)
