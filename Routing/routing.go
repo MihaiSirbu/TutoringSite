@@ -63,7 +63,7 @@ func loginPage(w http.ResponseWriter, r *http.Request){
 
 // CRUD operations for lessons
 
-
+// creates a lesson and adds it to the DB as a response to a POST request to /lessons
 func CreateLesson(w http.ResponseWriter, r *http.Request){
 	var req LessonRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -88,23 +88,46 @@ func CreateLesson(w http.ResponseWriter, r *http.Request){
 
 /*
 func UpdateLesson(w http.ResponseWriter, r *http.Request){
-	alesson := models.Lesson{Title:"L1",Description:"HardcodedLessons",Creator:"Mihai",Student:"Nick",LessonDate:16,LessonNumber:10}
-	result := initializers.DB.Create(&alesson)
+	var req LessonRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+    if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+	lesson := models.Lesson{Title:req.Title, Description:req.Description, Creator:req.Creator, Student:req.Student, LessonDate:req.LessonDate, LessonNumber:req.LessonNumber}
+	log.Println("Creating lesson !")
+	log.Println("Title: ",req.Title)
+	log.Println("Descrip", req.Description)
+	result := initializers.DB.Create(&lesson)
 	if result.Error != nil{
 		log.Fatal("StatusInternalServerError")
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(lesson)
 }
 
 func DeleteLesson(db *gorm.DB){
 	initializers.DB.Delete(&alesson)
 }
+*/
 
-func ReadLesson(db *gorm.DB){
-	renderTemplate(w,"templates/loginPage.html",nil)
+// MUST UPDATE TO RECEIVE FROM SPECIFIC TOKEN
+func GetAllLessons(w http.ResponseWriter, r *http.Request){
+	var lessons []models.Lesson
+
+	// Assuming 'X' is the value for the student you are searching for.
+	initializers.DB.Where(&models.Lesson{Student: "Nick"}).Find(&lessons)
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(lessons)
+	
 }
 
 
-*/
+
 
 
 
@@ -116,8 +139,8 @@ func RunServer(port int) {
 	router := mux.NewRouter()
 	// get methods
 	router.HandleFunc("/", homePage).Methods("GET")
-	router.HandleFunc("/", CreateLesson).Methods("POST")
-	router.HandleFunc("/lessons", lessonsPage).Methods("GET")
+	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
+	router.HandleFunc("/lessons", GetAllLessons).Methods("GET")
 	router.HandleFunc("/login", loginPage).Methods("GET")
 	//router.HandleFunc("/login", loginAuth).Methods("POST")
 
