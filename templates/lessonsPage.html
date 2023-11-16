@@ -1,17 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>My Website</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
-  </head>
-  <body>
-    <main>
-        <h1>Welcome to lessons</h1>  
-    </main>
-	<script src="index.js"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #34495e;
+    margin: 0;
+    padding: 20px;
+    color: white;
+  }
+  .lesson-card {
+    background: white;
+    color: black;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .lesson-card:hover {
+    background-color: #f8f8f8;
+  }
+  .lesson-title {
+    font-size: 24px;
+    margin: 0;
+  }
+  .lesson-date {
+    float: right;
+    color: #555;
+  }
+  .lesson-description {
+    clear: both;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<!-- Dynamically generated lesson cards -->
+{{range .Lessons}}
+<div class="lesson-card" onclick="window.location.href='/lesson/{{.ID}}';">
+  <div class="lesson-title">{{.Title}}</div>
+  <div class="lesson-date">{{.LessonDate}}</div>
+  <p class="lesson-description">{{.Description}}</p>
+</div>
+{{end}}
+</body>
 </html>

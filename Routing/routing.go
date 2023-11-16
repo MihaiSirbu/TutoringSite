@@ -38,8 +38,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
         return
     }
 
-    // Execute the template, writing the generated HTML to the `http.ResponseWriter`
-    // The `data` parameter is used to pass dynamic data to the template
+    
     err = t.Execute(w, data)
     if err != nil {
         // Handle the error as above
@@ -53,7 +52,15 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func lessonsPage(w http.ResponseWriter, r *http.Request){
-	renderTemplate(w,"templates/lessonsPage.html",nil)
+	allLessons := GetAllLessons()
+	data := struct {
+        Lessons []models.Lesson
+    }{
+        Lessons: allLessons,
+    }
+
+	renderTemplate(w,"templates/lessonsPage.html",data)
+
 
 }
 
@@ -139,7 +146,7 @@ func GetLesson(w http.ResponseWriter, r *http.Request){
 }
 
 // MUST UPDATE TO RECEIVE FROM SPECIFIC TOKEN
-func GetAllLessons(w http.ResponseWriter, r *http.Request){
+func GetAllLessons()([]models.Lesson){
 	var lessons []models.Lesson
 
 	// Assuming 'X' is the value for the student you are searching for.
@@ -147,9 +154,7 @@ func GetAllLessons(w http.ResponseWriter, r *http.Request){
 
 	// need to add errNotFound404
 
-	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(lessons)
+	return lessons
 	
 }
 
@@ -167,8 +172,10 @@ func RunServer(port int) {
 	// get methods
 	router.HandleFunc("/", homePage).Methods("GET")
 
+	// lessons
+	router.HandleFunc("/lessons", lessonsPage).Methods("GET")
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
-	router.HandleFunc("/lessons", GetAllLessons).Methods("GET")
+
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
 	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
