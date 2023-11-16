@@ -13,6 +13,7 @@ import (
 
 	//"gorm.io/driver/postgres"
   	//"gorm.io/gorm"
+	"fmt"
 	
 	"github.com/MihaiSirbu/TutoringSite/initializers"
 	"github.com/MihaiSirbu/TutoringSite/models"
@@ -127,23 +128,7 @@ func DeleteLesson(w http.ResponseWriter, r *http.Request){
 }
 
 
-func GetLesson(w http.ResponseWriter, r *http.Request){
-	
-	vars := mux.Vars(r)
-    id := vars["id"]
 
-	var lesson models.Lesson
-	
-	// fetching single lesson based on id
-	initializers.DB.First(&lesson, id)
-
-	// need to add error finding
-
-	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(lesson)
-	
-}
 
 // MUST UPDATE TO RECEIVE FROM SPECIFIC TOKEN
 func GetAllLessons()([]models.Lesson){
@@ -168,8 +153,15 @@ func GetAllLessons()([]models.Lesson){
 
 
 func RunServer(port int) {
+	// serve static files
+	fs := http.FileServer(http.Dir("templates/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+ 
+	log.Println("Serving static files from ./templates/static")
+
+	// routing
 	router := mux.NewRouter()
-	// get methods
+	//homepage
 	router.HandleFunc("/", homePage).Methods("GET")
 
 	// lessons
@@ -177,21 +169,22 @@ func RunServer(port int) {
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
 
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
-	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
+	router.HandleFunc("/api/lessons/{id}", GetLesson).Methods("GET")
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
 
 
-
+	//logins
 	router.HandleFunc("/login", loginPage).Methods("GET")
 	//router.HandleFunc("/login", loginAuth).Methods("POST")
 
 	
 
+	
 
 
 
 	log.Println("Server starting on port:",port)
-	err := http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), router)
 	if err != nil {
 			log.Fatal("There's an error with the server,", err)
 	}

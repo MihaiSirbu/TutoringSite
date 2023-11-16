@@ -6,6 +6,8 @@ import (
 	"github.com/MihaiSirbu/TutoringSite/initializers"
 
 
+
+
     
 	
 
@@ -13,10 +15,21 @@ import (
 
 
 
+
+
+
+
 func init() {
 	initializers.ConnectToDB()
+	
+
+
 }
 
 func main() {
-	Routing.RunServer(8080)
+
+
+
+	
+	Routing.RunServer(9091)
 }

@@ -12,6 +12,13 @@
     padding: 20px;
     color: white;
   }
+  .title {
+    background: white;
+    color: black;
+    padding: 10px;
+    margin-bottom: 20px; /* Spacing between the title and lessons */
+    text-align: center;
+  }
   .lesson-card {
     background: white;
     color: black;
@@ -39,6 +46,7 @@
 </style>
 </head>
 <body>
+  <div class="title">Lessons!</div>
 <!-- Dynamically generated lesson cards -->
 {{range .Lessons}}
 <div class="lesson-card" onclick="window.location.href='/lesson/{{.ID}}';">
