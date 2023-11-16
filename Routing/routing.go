@@ -72,9 +72,6 @@ func CreateLesson(w http.ResponseWriter, r *http.Request){
         return
     }
 	lesson := models.Lesson{Title:req.Title, Description:req.Description, Creator:req.Creator, Student:req.Student, LessonDate:req.LessonDate, LessonNumber:req.LessonNumber}
-	log.Println("Creating lesson !")
-	log.Println("Title: ",req.Title)
-	log.Println("Descrip", req.Description)
 	result := initializers.DB.Create(&lesson)
 	if result.Error != nil{
 		log.Fatal("StatusInternalServerError")
@@ -86,32 +83,53 @@ func CreateLesson(w http.ResponseWriter, r *http.Request){
 }
 
 
-/*
+
 func UpdateLesson(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+    id := vars["id"]
+
+	var lesson models.Lesson
+	
+	// fetching single lesson based on id
+	initializers.DB.First(&lesson, id)
+
 	var req LessonRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         http.Error(w, "Error parsing request body", http.StatusBadRequest)
         return
     }
-	lesson := models.Lesson{Title:req.Title, Description:req.Description, Creator:req.Creator, Student:req.Student, LessonDate:req.LessonDate, LessonNumber:req.LessonNumber}
-	log.Println("Creating lesson !")
-	log.Println("Title: ",req.Title)
-	log.Println("Descrip", req.Description)
-	result := initializers.DB.Create(&lesson)
-	if result.Error != nil{
-		log.Fatal("StatusInternalServerError")
-	}
+	initializers.DB.Model(&lesson).Updates(models.Lesson{Title:req.Title, Description:req.Description, Creator:req.Creator, Student:req.Student, LessonDate:req.LessonDate, LessonNumber:req.LessonNumber})
+
+
 
 	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusCreated)
+    w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(lesson)
 }
-
+/*
 func DeleteLesson(db *gorm.DB){
 	initializers.DB.Delete(&alesson)
 }
 */
+
+func GetLesson(w http.ResponseWriter, r *http.Request){
+	
+	vars := mux.Vars(r)
+    id := vars["id"]
+
+	var lesson models.Lesson
+	
+	// fetching single lesson based on id
+	initializers.DB.First(&lesson, id)
+
+	// need to add error finding
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(lesson)
+	
+}
 
 // MUST UPDATE TO RECEIVE FROM SPECIFIC TOKEN
 func GetAllLessons(w http.ResponseWriter, r *http.Request){
@@ -119,6 +137,8 @@ func GetAllLessons(w http.ResponseWriter, r *http.Request){
 
 	// Assuming 'X' is the value for the student you are searching for.
 	initializers.DB.Where(&models.Lesson{Student: "Nick"}).Find(&lessons)
+
+	// need to add errNotFound404
 
 	w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
@@ -141,6 +161,8 @@ func RunServer(port int) {
 	router.HandleFunc("/", homePage).Methods("GET")
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
 	router.HandleFunc("/lessons", GetAllLessons).Methods("GET")
+	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
+	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
 	router.HandleFunc("/login", loginPage).Methods("GET")
 	//router.HandleFunc("/login", loginAuth).Methods("POST")
 
