@@ -10,6 +10,106 @@ function goToLesson(lessonId) {
         console.error('Error fetching lesson details:', error);
       });
 }
+// Login Page
+function LoginAuth(form) {
+  var username = form.elements["username"].value;
+  var password = form.elements["password"].value;
+
+  fetch('/login', {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "username": username, "password": password })
+  })
+  .then(response => {
+      if (response.ok) {
+          return response.json();
+      } else {
+          throw new Error('Login failed');
+      }
+  })
+  .then(data => {
+      console.log(data.message);
+      window.location.href = '/lessons'; // Redirect to the new page
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+
+
+// Register Page
+function registerUser(event, form) {
+  event.preventDefault();
+  var username = form.elements["usernameRegister"].value;
+  var password1 = form.elements["passwordRegister1"].value;
+  var password2 = form.elements["passwordRegister2"].value;
+
+  errorString = validateFormInformationForRegistration(username, password1, password2)
+
+  if (errorString != "") {
+      console.error('Error: ', errorString);
+      showError(errorString);
+      return;
+  }
+
+  fetch('/registerUser', {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "username": username, "password": password1 })
+  })
+  .then(response => {
+      if (response.ok) {
+          return response.json();
+      } else {
+          throw new Error('Registration Failed');
+      }
+  })
+  .then(data => {
+      // Handle success, maybe display a success message
+      window.location.href = '/lessons'; // Redirect to the new page
+  })
+  .catch(error => {
+      // Display error to the user
+      console.error('Error:', error);
+  });
+}
+
+
+function validateFormInformationForRegistration(username,password1,password2) {
+  astring = ""
+  if(password1 != password2){
+    astring = "Passwords must match.";
+
+  }
+
+  if (password1.length < 7) {
+      astring = "Password must be at least 7 characters long and contain at least 1 special character and 1 number.";
+      
+  }
+  if(username.length < 5){
+    astring = "Username must be at least 5 characters long";
+    
+  }
+
+  return astring;
+}
+
+function markInputError(inputElement) {
+  inputElement.classList.add('input-error');
+}
+
+function clearInputError(inputElement) {
+  inputElement.classList.remove('input-error');
+}
+
+
+
 
   
   

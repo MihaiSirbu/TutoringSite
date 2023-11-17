@@ -18,7 +18,7 @@ type Lesson struct {
 type User struct {
 	gorm.Model
 	Username 	 string
-	Name 		 string
+	Email		 string
 	PasswordHash string
 
 }

@@ -2,17 +2,21 @@ package auth
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
-	"html/template"
 	"github.com/dgrijalva/jwt-go"
     "time"
+    "github.com/MihaiSirbu/TutoringSite/initializers"
+    "github.com/MihaiSirbu/TutoringSite/models"
+    "fmt"
+    "gorm.io/gorm"
+    "errors"
     
-	
+
 
 )
+
+var jwtKey = []byte("Mihai04")
 
 
 type UserCredentials struct {
@@ -21,7 +25,12 @@ type UserCredentials struct {
 }
 
 func LoginAuth(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("We entered login POST rsq")
+    
     var creds UserCredentials
+    
+
+	
     // Decode the JSON body into the `creds` struct.
     err := json.NewDecoder(r.Body).Decode(&creds)
     if err != nil {
@@ -30,8 +39,9 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+
     // TODO: Get the user's hashed password from the database.
-    expectedPasswordHash, err := GetUserPasswordHash(creds.Username)
+    expectedPasswordHash,err := GetUserPasswordHash(creds.Username)
 
     // TODO: Compare the stored hashed password, with the hashed version of the password that was received
     if err != nil || !CheckPasswordHash(creds.Password, expectedPasswordHash) {
@@ -52,24 +62,62 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
     http.SetCookie(w, &http.Cookie{
         Name: "token",
         Value: tokenString,
-        Expires: time.Now().Add(24 * time.Hour), // or whatever expiry you want
-        HttpOnly: true, // ensures the cookie is sent only over HTTP(S), not accessible by JavaScript
+        Expires: time.Now().Add(24 * time.Hour), 
+        //HttpOnly: true, // ensures the cookie is sent only over HTTP(S), not accessible by JavaScript
     })
 
-    // You could also send the token in the response body, depending on your frontend's requirements
+ 
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }
 
-func GenerateJWT(username string)(string){
-	return 
+// Custom claims structure
+type Claims struct {
+    Username string `json:"username"`
+    jwt.StandardClaims
+}
+func GenerateJWT(username string) (string, error) {
+    // Set token claims
+    expirationTime := time.Now().Add(24 * time.Hour) // Token is valid for 24hrs
+    claims := &Claims{
+        Username: username,
+        StandardClaims: jwt.StandardClaims{
+            ExpiresAt: expirationTime.Unix(),
+            Issuer:    "TutoringSite", 
+        },
+    }
+
+    // Create token
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+    // Sign token and return
+    tokenString, err := token.SignedString(jwtKey)
+    if err != nil {
+        return "", err // Handle any error that occurred in signing the token
+    }
+
+    return tokenString, nil
 }
 
-func CheckPasswordHash(creds.Password, expectedPasswordHash string)(bool){
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+func CheckPasswordHash(password string, expectedPasswordHash string)(bool){
+	err := bcrypt.CompareHashAndPassword([]byte(password), []byte(expectedPasswordHash))
     return err == nil
 }
 
-func GetUserPasswordHash(username string)(string){
+func GetUserPasswordHash(username string) (string, error) {
+    var user models.User
 
+
+    result := initializers.DB.Where("username = ?", username).First(&user)
+
+    if result.Error != nil {
+        
+        if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+            return "", fmt.Errorf("username not found")
+        }
+        
+        return "", result.Error
+    }
+
+    return user.PasswordHash, nil
 }

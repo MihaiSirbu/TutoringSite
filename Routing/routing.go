@@ -17,6 +17,8 @@ import (
 	
 	"github.com/MihaiSirbu/TutoringSite/initializers"
 	"github.com/MihaiSirbu/TutoringSite/models"
+	"github.com/MihaiSirbu/TutoringSite/authentication"
+	"github.com/MihaiSirbu/TutoringSite/user"
 
 )
 
@@ -50,6 +52,10 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w,"templates/homePage.html",nil)
+}
+
+func registrationPage(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w,"templates/registerPage.html",nil)
 }
 
 func lessonsPage(w http.ResponseWriter, r *http.Request){
@@ -175,7 +181,12 @@ func RunServer(port int) {
 
 	//logins
 	router.HandleFunc("/login", loginPage).Methods("GET")
-	//router.HandleFunc("/login", loginAuth).Methods("POST")
+	router.HandleFunc("/login", auth.LoginAuth).Methods("POST")
+
+	//registerUser
+	router.HandleFunc("/register", registrationPage).Methods("GET")
+	router.HandleFunc("/register", user.RegisterUser).Methods("POST")
+
 
 	
 
