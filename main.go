@@ -5,12 +5,6 @@ import (
 	"github.com/MihaiSirbu/TutoringSite/Routing"
 	"github.com/MihaiSirbu/TutoringSite/initializers"
 
-
-
-
-    
-	
-
 )
 
 

@@ -19,6 +19,6 @@ type User struct {
 	gorm.Model
 	Username 	 string
 	Email		 string
-	PasswordHash string
+	PasswordHash string `gorm:"size:255"` //need at least 60 to store the bcrypt hashed password
 
 }

@@ -44,7 +44,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
     expectedPasswordHash,err := GetUserPasswordHash(creds.Username)
 
     // TODO: Compare the stored hashed password, with the hashed version of the password that was received
-    if err != nil || !CheckPasswordHash(creds.Password, expectedPasswordHash) {
+    if err != nil || !CheckPasswordHash(expectedPasswordHash, creds.Password) {
         // If the passwords don't match or there's an error, return a 401 status
         w.WriteHeader(http.StatusUnauthorized)
         return
@@ -101,6 +101,7 @@ func GenerateJWT(username string) (string, error) {
 
 func CheckPasswordHash(password string, expectedPasswordHash string)(bool){
 	err := bcrypt.CompareHashAndPassword([]byte(password), []byte(expectedPasswordHash))
+
     return err == nil
 }
 

@@ -41,11 +41,12 @@ func verifyUsernameStrength(username string)(bool){
 	}
 
 	var exists_User models.User
-	result := initializers.DB.Where(&models.User{Username: username}).Find(&exists_User)
+	initializers.DB.Where(&models.User{Username: username}).Find(&exists_User)
     fmt.Println(exists_User.Username)
-	if(result.Error == nil){ // so if we do find another user with the same username
-		return false
-	}
+    if exists_User.Username != ""{
+        return false
+    }
+	
 	return true
 
 }
