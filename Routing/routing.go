@@ -59,8 +59,17 @@ func registrationPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func lessonsPage(w http.ResponseWriter, r *http.Request){
+	claims, ok := r.Context().Value("claims").(*auth.Claims)
+    if !ok {
+        // Handle the error appropriately
+        http.Error(w, "Error getting claims", http.StatusInternalServerError)
+        return
+    }
 	
-	allLessons := GetAllLessons()
+
+
+	
+	allLessons := GetAllLessons(claims.Username)
 	data := struct {
         Lessons []models.Lesson
     }{
@@ -83,6 +92,7 @@ func loginPage(w http.ResponseWriter, r *http.Request){
 
 // creates a lesson and adds it to the DB as a response to a POST request to /lessons
 func CreateLesson(w http.ResponseWriter, r *http.Request){
+	fmt.Println("creating lesson")
 	var req LessonRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
@@ -141,11 +151,11 @@ func DeleteLesson(w http.ResponseWriter, r *http.Request){
 
 
 // MUST UPDATE TO RECEIVE FROM SPECIFIC TOKEN
-func GetAllLessons()([]models.Lesson){
+func GetAllLessons(studentName string)([]models.Lesson){
 	var lessons []models.Lesson
 
 	// Assuming 'X' is the value for the student you are searching for.
-	initializers.DB.Where(&models.Lesson{Student: "Nick"}).Find(&lessons)
+	initializers.DB.Where(&models.Lesson{Student: studentName}).Find(&lessons)
 
 	// need to add errNotFound404
 
@@ -176,7 +186,7 @@ func RunServer(port int) {
 	// lessons
 
 
-	router.Handle("/lessons", auth.TokenVerifyMiddleware(http.HandlerFunc(lessonsPage)))
+	router.Handle("/lessons", auth.TokenVerifyMiddleware(http.HandlerFunc(lessonsPage))).Methods("GET")
 
 
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")

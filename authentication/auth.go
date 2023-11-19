@@ -11,6 +11,7 @@ import (
     "fmt"
     "gorm.io/gorm"
     "errors"
+    "context"
     
 
 
@@ -24,8 +25,14 @@ type UserCredentials struct {
     Password string `json:"password"`
 }
 
+
+type Claims struct {
+    Username string `json:"username"`
+    jwt.StandardClaims
+}
+
 func LoginAuth(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("We entered login POST rsq")
+
     
     var creds UserCredentials
     
@@ -71,11 +78,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }
 
-// Custom claims structure
-type Claims struct {
-    Username string `json:"username"`
-    jwt.StandardClaims
-}
+
 func GenerateJWT(username string) (string, error) {
     // Set token claims
     expirationTime := time.Now().Add(24 * time.Hour) // Token is valid for 24hrs
@@ -154,6 +157,9 @@ func TokenVerifyMiddleware(next http.Handler) http.Handler {
             http.Error(w, "Unauthorized: User not found", http.StatusUnauthorized)
             return
         }
+
+        ctx := context.WithValue(r.Context(), "claims", claims)
+        r = r.WithContext(ctx)
 
         // If the token is valid, call the next handler
         next.ServeHTTP(w, r)
