@@ -70,12 +70,12 @@ function registerUser(event, form) {
       body: JSON.stringify({ "username": username, "password": password1 })
   })
   .then(response => {
-    console.log("This is the response from the server", response)
+    
       if (response.ok) {
-          console.log("registration was ok")
+          
           return response.json();
       } else {
-        console.log("registration not ok")
+        
           throw new Error('Registration Failed');
       }
   })
@@ -85,7 +85,7 @@ function registerUser(event, form) {
 
 
     localStorage.setItem('jwtToken', jwtToken);
-    console.log("going to lessons from registration !")
+
     window.location.href = '/lessons';
     
 })

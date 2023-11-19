@@ -136,6 +136,28 @@ func UpdateLesson(w http.ResponseWriter, r *http.Request){
     json.NewEncoder(w).Encode(lesson)
 }
 
+func CreateExercise(w http.ResponseWriter, r *http.Request){
+	var req models.Exercise
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+
+	newExercise := models.Exercise{ExerciseNumber:req.ExerciseNumber, LessonNumber:req.LessonNumber, ExerciseContent:req.ExerciseContent, Answer:req.Answer}
+	result := initializers.DB.Create(&newExercise)
+	if result.Error != nil{
+		log.Fatal("StatusInternalServerError")
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(newExercise)
+
+
+    
+}
+
 func DeleteLesson(w http.ResponseWriter, r *http.Request){
 	// probably needs some checks as well as error responses
 	vars := mux.Vars(r)
@@ -146,6 +168,7 @@ func DeleteLesson(w http.ResponseWriter, r *http.Request){
     w.WriteHeader(http.StatusOK)
     
 }
+
 
 
 
@@ -192,8 +215,11 @@ func RunServer(port int) {
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
 
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
-	router.HandleFunc("/api/lessons/{id}", GetLesson).Methods("GET")
+	//router.HandleFunc("/lessons/{id}", DisplayLesson).Methods("GET")
+	//router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
+
+	router.HandleFunc("/exercises",CreateExercise).Methods("POST")
 
 
 	//logins

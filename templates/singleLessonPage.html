@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+    <div id="lesson-container">
+        <header>
+            <h1 id="lesson-title">{{ .Title }}</h1>
+            <date id="lesson-date">{{ .LessonDate }}</date>
+        </header>
+        <section id="lesson-overview">
+            <h2>Lesson Overview</h2>
+            <p id="lesson-description">{{ .Description }}</p>
+        </section>
+        <section id="exercises">
+            <h2>Exercises</h2>
+            {{ range .Exercises }}
+            <div class="exercise">
+                <label>{{ .ExerciseContent }}</label>
+                <input type="text" placeholder="Your answer">
+            </div>
+            {{ end }}
+        </section>
+        <section id="feedback-section">
+            <h2>Questions or Feedback</h2>
+            <form id="feedback-form">
+                <input type="text" id="student-name" name="student-name" placeholder="Your Name">
+                <textarea id="student-question" name="student-question" placeholder="Your Question"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </div>
+</body>
+</html>
+

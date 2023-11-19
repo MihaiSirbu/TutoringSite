@@ -4,7 +4,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"net/http"
-	"encoding/json"
+	//"encoding/json"
 
 	_ "github.com/lib/pq"
 
@@ -29,10 +29,11 @@ func GetLesson(w http.ResponseWriter, r *http.Request){
 	initializers.DB.First(&lesson, id)
 
 	// need to add error finding
+	initializers.DB.Where("LessonNumber = ?", lesson.LessonNumber).Find(&lesson.Exercises)
 
-	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(lesson)
+	
+
+	renderTemplate(w,"templates/loginPage.html",lesson)
 	
 }
 

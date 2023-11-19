@@ -4,6 +4,16 @@ import (
 	"gorm.io/gorm"
 )
 
+
+type User struct {
+	gorm.Model
+	Username 	 string
+	Email		 string
+	PasswordHash string `gorm:"size:255"` //need at least 60 to store the bcrypt hashed password
+
+}
+
+
 type Lesson struct {
 	gorm.Model
 	Title			string
@@ -12,13 +22,13 @@ type Lesson struct {
 	Student         string
 	LessonDate      int
 	LessonNumber	int
+	Exercises		[]Exercise
 	
 }
 
-type User struct {
+type Exercise struct {
 	gorm.Model
-	Username 	 string
-	Email		 string
-	PasswordHash string `gorm:"size:255"` //need at least 60 to store the bcrypt hashed password
-
+	LessonNumber    int	`gorm:"foreignKey:LessonID"`
+	ExerciseContent string
+	Answer          string
 }

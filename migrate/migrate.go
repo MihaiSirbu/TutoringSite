@@ -18,11 +18,12 @@ func dropTable(model interface{}){
 
 func main() {
 	
-	dropTable(models.Lesson{})
-	dropTable(models.User{})
+	//dropTable(models.Lesson{})
+	//dropTable(models.User{})
 	
 	
 	initializers.DB.AutoMigrate(&models.Lesson{})
 	initializers.DB.AutoMigrate(&models.User{})
+	initializers.DB.AutoMigrate(&models.Exercise{})
 	
 }
