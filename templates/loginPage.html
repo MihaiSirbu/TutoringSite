@@ -49,17 +49,21 @@
     margin-top: 10px;
   }
 </style>
+<script src="/static/clientSide.js">
+</script>
 </head>
 <body>
 <div class="login-container">
 
   <div style="text-align: center;">
-    <img src="/static/image/small logo.jpg" alt="Logo" style="margin-bottom: 20px;">
+    <img src="/static/image/small_logo.jpg" alt="Logo" style="margin-bottom: 20px;">
   </div>
   <form class="login-form">
-    <input type="username" placeholder="Enter your username...">
-    <input type="password" placeholder="Enter your password...">
-    <button type="submit" onclick="LoginAuth(this.form);">LOGIN</button>
+    <input type="text" name="username" placeholder="Enter your username...">
+    <input type="password" name="password" placeholder="Enter your password...">
+
+    <button type="submit" onclick="LoginAuth(this.form, event);">LOGIN</button>
+
 
     
   </form>

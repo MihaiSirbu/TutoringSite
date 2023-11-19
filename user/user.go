@@ -9,6 +9,8 @@ import (
     "net/http"
     "encoding/json"
     "fmt"
+    "time"
+    "github.com/MihaiSirbu/TutoringSite/authentication"
 	
 
 )
@@ -42,7 +44,6 @@ func verifyUsernameStrength(username string)(bool){
 
 	var exists_User models.User
 	initializers.DB.Where(&models.User{Username: username}).Find(&exists_User)
-    fmt.Println(exists_User.Username)
     if exists_User.Username != ""{
         return false
     }
@@ -86,6 +87,7 @@ func verifyPasswordStrength(password string)(bool){
 
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("We are trying to register a user")
     var req User
     err := json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
@@ -113,9 +115,22 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
     }
     initializers.DB.Create(&newUser)
 
+
+    tokenString, err := auth.GenerateJWT(newUser.Username)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    http.SetCookie(w, &http.Cookie{
+        Name: "token",
+        Value: tokenString,
+        Expires: time.Now().Add(24 * time.Hour), 
+        
+    })
+
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+    json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 
 }
 

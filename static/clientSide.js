@@ -11,9 +11,14 @@ function goToLesson(lessonId) {
       });
 }
 // Login Page
-function LoginAuth(form) {
+function LoginAuth(form,event) {
+  console.log("Now checking for authentication clientside")
+  event.preventDefault();
   var username = form.elements["username"].value;
   var password = form.elements["password"].value;
+
+  console.log("username inputted: ",username)
+  console.log("password inputted: ",password)
 
   fetch('/login', {
       method: 'POST',
@@ -55,27 +60,36 @@ function registerUser(event, form) {
       return;
   }
 
-  fetch('/registerUser', {
+  fetch('/register', {
       method: 'POST',
       headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
       },
+      
       body: JSON.stringify({ "username": username, "password": password1 })
   })
   .then(response => {
+    console.log("This is the response from the server", response)
       if (response.ok) {
+          console.log("registration was ok")
           return response.json();
       } else {
+        console.log("registration not ok")
           throw new Error('Registration Failed');
       }
   })
   .then(data => {
-      // Handle success, maybe display a success message
-      window.location.href = '/lessons'; // Redirect to the new page
-  })
+    
+    let jwtToken = data.token; 
+
+
+    localStorage.setItem('jwtToken', jwtToken);
+    console.log("going to lessons from registration !")
+    window.location.href = '/lessons';
+    
+})
   .catch(error => {
-      // Display error to the user
       console.error('Error:', error);
   });
 }

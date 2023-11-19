@@ -122,3 +122,41 @@ func GetUserPasswordHash(username string) (string, error) {
 
     return user.PasswordHash, nil
 }
+
+
+func TokenVerifyMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Extracting the token from the cookie
+        cookie, err := r.Cookie("token")
+        if err != nil {
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+
+        tokenString := cookie.Value
+        claims := &Claims{}
+
+        token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+            return jwtKey, nil
+        })
+
+        if err != nil || !token.Valid {
+            http.Error(w, "Unauthorized", http.StatusUnauthorized)
+            return
+        }
+
+        
+        var checkUser models.User
+        initializers.DB.Where("username = ?", claims.Username).First(&checkUser)
+
+        // Check if the user exists and is valid
+        if checkUser.Username != claims.Username {
+            http.Error(w, "Unauthorized: User not found", http.StatusUnauthorized)
+            return
+        }
+
+        // If the token is valid, call the next handler
+        next.ServeHTTP(w, r)
+    })
+}
+

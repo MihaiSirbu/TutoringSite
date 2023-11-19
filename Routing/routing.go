@@ -59,6 +59,7 @@ func registrationPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func lessonsPage(w http.ResponseWriter, r *http.Request){
+	
 	allLessons := GetAllLessons()
 	data := struct {
         Lessons []models.Lesson
@@ -70,6 +71,9 @@ func lessonsPage(w http.ResponseWriter, r *http.Request){
 
 
 }
+
+
+
 
 func loginPage(w http.ResponseWriter, r *http.Request){
 	renderTemplate(w,"templates/loginPage.html",nil)
@@ -159,11 +163,10 @@ func GetAllLessons()([]models.Lesson){
 
 
 func RunServer(port int) {
-	// serve static files
-	fs := http.FileServer(http.Dir("templates/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	
  
-	log.Println("Serving static files from ./templates/static")
+
 
 	// routing
 	router := mux.NewRouter()
@@ -171,7 +174,11 @@ func RunServer(port int) {
 	router.HandleFunc("/", homePage).Methods("GET")
 
 	// lessons
-	router.HandleFunc("/lessons", lessonsPage).Methods("GET")
+
+
+	router.Handle("/lessons", auth.TokenVerifyMiddleware(http.HandlerFunc(lessonsPage)))
+
+
 	router.HandleFunc("/lessons", CreateLesson).Methods("POST")
 
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
@@ -187,6 +194,9 @@ func RunServer(port int) {
 	router.HandleFunc("/register", registrationPage).Methods("GET")
 	router.HandleFunc("/register", user.RegisterUser).Methods("POST")
 
+	//serving static files
+	fs := http.FileServer(http.Dir("static"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	
 
