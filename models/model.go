@@ -22,13 +22,13 @@ type Lesson struct {
 	Student         string
 	LessonDate      int
 	LessonNumber	int
-	Exercises		[]Exercise
+	Exercises		[]Exercise `gorm:"foreignKey:LessonID"`
 	
 }
 
 type Exercise struct {
 	gorm.Model
-	LessonNumber    int	`gorm:"foreignKey:LessonID"`
+	LessonID    	uint	
 	ExerciseContent string
 	Answer          string
 }

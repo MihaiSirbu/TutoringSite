@@ -49,7 +49,7 @@
   <div class="title">Lessons!</div>
 <!-- Dynamically generated lesson cards -->
 {{range .Lessons}}
-<div class="lesson-card" onclick="window.location.href='/lesson/{{.ID}}';">
+<div class="lesson-card" onclick="window.location.href='/lessons/{{.ID}}';">
   <div class="lesson-title">{{.Title}}</div>
   <div class="lesson-date">{{.LessonDate}}</div>
   <p class="lesson-description">{{.Description}}</p>

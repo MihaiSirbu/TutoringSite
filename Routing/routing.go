@@ -144,7 +144,7 @@ func CreateExercise(w http.ResponseWriter, r *http.Request){
         return
     }
 
-	newExercise := models.Exercise{ExerciseNumber:req.ExerciseNumber, LessonNumber:req.LessonNumber, ExerciseContent:req.ExerciseContent, Answer:req.Answer}
+	newExercise := models.Exercise{LessonID:req.LessonID, ExerciseContent:req.ExerciseContent, Answer:req.Answer}
 	result := initializers.DB.Create(&newExercise)
 	if result.Error != nil{
 		log.Fatal("StatusInternalServerError")
@@ -177,8 +177,8 @@ func DeleteLesson(w http.ResponseWriter, r *http.Request){
 func GetAllLessons(studentName string)([]models.Lesson){
 	var lessons []models.Lesson
 
-	// Assuming 'X' is the value for the student you are searching for.
-	initializers.DB.Where(&models.Lesson{Student: studentName}).Find(&lessons)
+	// return all the lessons where the student name is passed in
+	initializers.DB.Where("Student = ?", studentName).Find(&lessons)
 
 	// need to add errNotFound404
 
@@ -186,8 +186,25 @@ func GetAllLessons(studentName string)([]models.Lesson){
 	
 }
 
+// get specific lesson w/ exercises
+func GetLesson(w http.ResponseWriter, r *http.Request){
+	
+	vars := mux.Vars(r)
+    id := vars["id"]
+
+	var lesson models.Lesson
+	
+	result := initializers.DB.Where("id = ?", id).Preload("Exercises").Find(&lesson)
+
+	if result.Error != nil {
+        fmt.Println("Error fetching lessons with exercises:", result.Error)
+        return
+    }
 
 
+	renderTemplate(w,"templates/singleLessonPage.html",lesson)
+	
+}
 
 
 
@@ -216,7 +233,7 @@ func RunServer(port int) {
 
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
 	//router.HandleFunc("/lessons/{id}", DisplayLesson).Methods("GET")
-	//router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
+	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
 
 	router.HandleFunc("/exercises",CreateExercise).Methods("POST")
