@@ -1,3 +1,6 @@
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Replace these values with actual data from your database
     const lessonData = {

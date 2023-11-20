@@ -10,6 +10,7 @@ function goToLesson(lessonId) {
         console.error('Error fetching lesson details:', error);
       });
 }
+
 // Login Page
 function LoginAuth(form,event) {
   console.log("Now checking for authentication clientside")
@@ -30,12 +31,14 @@ function LoginAuth(form,event) {
   })
   .then(response => {
       if (response.ok) {
+          console.log("Login was ok")
           return response.json();
       } else {
           throw new Error('Login failed');
       }
   })
   .then(data => {
+
       console.log(data.message);
       window.location.href = '/lessons'; // Redirect to the new page
   })

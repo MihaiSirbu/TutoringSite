@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Title }}</title>
+    <title>Lesson Page</title> <!-- Removed Go template code from title -->
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <div id="lesson-container">
         <header>
-            <h1 id="lesson-title">{{ .Title }}</h1>
-            <date id="lesson-date">{{ .LessonDate }}</date>
+            <h1 id="lesson-title"></h1> <!-- Removed Go template code -->
+            <date id="lesson-date"></date> <!-- Removed Go template code -->
         </header>
         <section id="lesson-overview">
             <h2>Lesson Overview</h2>
-            <p id="lesson-description">{{ .Description }}</p>
+            <p id="lesson-description"></p> <!-- Removed Go template code -->
         </section>
         <section id="exercises">
             <h2>Exercises</h2>
-            {{ range .Exercises }}
-            <div class="exercise">
-                <label>{{ .ExerciseContent }}</label>
-                <input type="text" placeholder="Your answer">
-            </div>
-            {{ end }}
+            <!-- Exercise content will be added by JavaScript -->
         </section>
         <section id="feedback-section">
             <h2>Questions or Feedback</h2>
@@ -35,6 +31,6 @@
             </form>
         </section>
     </div>
+    <script src="/static/singleLesson.js"></script>
 </body>
 </html>
-

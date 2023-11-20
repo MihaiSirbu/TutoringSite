@@ -46,6 +46,9 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    fmt.Println("inputted username:",creds.Username)
+    fmt.Println("inputted password:",creds.Password)
+
 
     // TODO: Get the user's hashed password from the database.
     expectedPasswordHash,err := GetUserPasswordHash(creds.Username)
@@ -61,6 +64,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
     tokenString, err := GenerateJWT(creds.Username)
     if err != nil {
         // If there is an error in creating the JWT return an internal server error
+        fmt.Println("Error in creating the tokenstring")
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
@@ -73,7 +77,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
         //HttpOnly: true, // ensures the cookie is sent only over HTTP(S), not accessible by JavaScript
     })
 
- 
+    fmt.Println("reached the end of auth.login")
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }

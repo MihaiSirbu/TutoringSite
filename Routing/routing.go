@@ -19,6 +19,7 @@ import (
 	"github.com/MihaiSirbu/TutoringSite/models"
 	"github.com/MihaiSirbu/TutoringSite/authentication"
 	"github.com/MihaiSirbu/TutoringSite/user"
+	"bytes"
 
 )
 
@@ -35,19 +36,22 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
     // Parse the HTML template file
     t, err := template.ParseFiles(tmpl)
     if err != nil {
-        // Handle the error, such as by logging it and sending a generic
-        // "Internal Server Error" message to the client
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
     }
 
-    
-    err = t.Execute(w, data)
+    // Use a buffer to execute the template
+    buf := new(bytes.Buffer)
+    err = t.Execute(buf, data)
     if err != nil {
-        // Handle the error as above
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        return
     }
+
+    // Write the buffer to the response writer
+    w.Write(buf.Bytes())
 }
+
 
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +65,7 @@ func registrationPage(w http.ResponseWriter, r *http.Request) {
 func lessonsPage(w http.ResponseWriter, r *http.Request){
 	claims, ok := r.Context().Value("claims").(*auth.Claims)
     if !ok {
+		fmt.Println("Error in getting claims in Lessons page")
         // Handle the error appropriately
         http.Error(w, "Error getting claims", http.StatusInternalServerError)
         return
@@ -75,8 +80,12 @@ func lessonsPage(w http.ResponseWriter, r *http.Request){
     }{
         Lessons: allLessons,
     }
+	
 
+	fmt.Println("sending data back to user")
 	renderTemplate(w,"templates/lessonsPage.html",data)
+	fmt.Println("data has been sent successfully")
+	
 
 
 }
@@ -196,13 +205,17 @@ func GetLesson(w http.ResponseWriter, r *http.Request){
 	
 	result := initializers.DB.Where("id = ?", id).Preload("Exercises").Find(&lesson)
 
+	fmt.Println("our specific lesson title: ", lesson.Title)
+	fmt.Println("our specific lesson id: ", lesson.ID)
+
 	if result.Error != nil {
         fmt.Println("Error fetching lessons with exercises:", result.Error)
         return
     }
 
-
-	renderTemplate(w,"templates/singleLessonPage.html",lesson)
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(lesson)
 	
 }
 
@@ -233,7 +246,7 @@ func RunServer(port int) {
 
 	router.HandleFunc("/lessons/{id}", UpdateLesson).Methods("PUT")
 	//router.HandleFunc("/lessons/{id}", DisplayLesson).Methods("GET")
-	router.HandleFunc("/lessons/{id}", GetLesson).Methods("GET")
+	router.HandleFunc("/lessons/{id:[0-9]+}", GetLesson).Methods("GET")
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
 
 	router.HandleFunc("/exercises",CreateExercise).Methods("POST")
