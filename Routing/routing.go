@@ -166,6 +166,30 @@ func CreateExercise(w http.ResponseWriter, r *http.Request){
     
 }
 
+func UpdateExercise(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+    id := vars["id"]
+
+	var exercise models.Exercise
+	
+	// fetching single lesson based on id
+	initializers.DB.First(&exercise, id)
+
+	var req models.Exercise
+	err := json.NewDecoder(r.Body).Decode(&req)
+    if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+	initializers.DB.Model(&exercise).Where("status != ?", "Completed").Updates(models.Exercise{ExerciseNumber:req.ExerciseNumber, LessonID:req.LessonID, ExerciseContent:req.ExerciseContent, Answer:req.Answer, Status:req.Status})
+
+
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(exercise)
+}
+
 func DeleteLesson(w http.ResponseWriter, r *http.Request){
 	// probably needs some checks as well as error responses
 	vars := mux.Vars(r)
@@ -247,6 +271,7 @@ func RunServer(port int) {
 	router.HandleFunc("/lessons/{id}", DeleteLesson).Methods("DELETE")
 
 	router.HandleFunc("/exercises",CreateExercise).Methods("POST")
+	router.HandleFunc("/exercises/{id:[0-9]+}",UpdateExercise).Methods("PUT")
 
 
 	//logins

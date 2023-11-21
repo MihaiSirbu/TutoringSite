@@ -24,12 +24,12 @@
             <h2>Exercises</h2>
                 <div class="exercises-container">
                     {{ range $index, $exercise := .Exercises }}
-                    <div class="exercise">
+                    <div class="exercise"id="exercise{{ $index }}">
                         <span class="exercise-number">{{ $exercise.ExerciseNumber }}.</span>
                         <span class="exercise-content">$$ {{ $exercise.ExerciseContent }} $$</span>
                         <div class="response-area">
                             <input type="text" id="UserAns{{ $index }}" class="answer-input" placeholder="Your answer">
-                            <button class="verify-button" onclick="verifyAnswer(document.getElementById('UserAns{{ $index }}'), '{{ $exercise.Answer }}', event,$exercise.ID)">Verify</button>
+                            <button class="verify-button" onclick="verifyAnswer('UserAns{{ $index }}', '{{ $exercise.Answer }}', event,'{{ $exercise.ID }}','exercise{{ $index }}')">Verify</button>
                         </div>
                     </div>
                     {{ end }}
