@@ -1,44 +1,103 @@
+/* Updated main.css with color palette */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: #e7eef6; /* Light blue background */
 }
 
 #lesson-container {
-    max-width: 800px;
+    width: 80%;
     margin: 20px auto;
     padding: 20px;
+    background: #fff; /* White background for the content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 header {
-    background-color: #f0f0f0;
-    padding: 10px;
-    text-align: center;
-}
-
-#lesson-overview, #exercises, #feedback-section {
+    border-bottom: 2px solid #d1d8e0; /* Light grey border */
+    padding-bottom: 20px;
     margin-bottom: 20px;
 }
 
-#exercises h2, #feedback-section h2 {
-    background-color: #e0e0e0;
-    padding: 5px;
+h1#lesson-title {
+    color: #2c3e50; /* Dark blue color */
+    text-align: center;
+    font-size: 250%
 }
 
-#feedback-form input, #feedback-form textarea {
-    width: 100%;
-    padding: 10px;
+date {
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    color: #95a5a6; /* Grey color */
+}
+
+section#lesson-overview,
+section#exercises,
+section#feedback-section {
+    background-color: #fff; /* White background */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px; /* Rounded corners for the sections */
+}
+
+section#lesson-overview h2,
+section#exercises h2,
+section#feedback-section h2 {
+    color: #2c3e50; /* Dark blue color */
     margin-bottom: 10px;
 }
 
-#feedback-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
+.exercise {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    background-color: #f8f9fa; /* Very light grey background */
+    border-left: 5px solid #3498db; /* Blue border on the left */
+    padding: 15px;
+    margin-bottom: 20px;
+    gap: 10px; /* Creates a gap between children */
 }
 
-#feedback-form button:hover {
-    background-color: #0056b3;
+.exercise-number {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.exercise-content {
+    flex-grow: 1;
+    min-width: 0; /* Prevents content from overflowing */
+}
+
+.answer-input {
+    flex: 1 0 auto; /* Allows input to grow and shrink */
+    padding: 5px;
+    margin: 0 10px; /* Space on both sides */
+    border: 1px solid #ced4da; /* Grey border */
+    border-radius: 4px;
+}
+
+.verify-button {
+    white-space: nowrap; /* Prevents text from wrapping */
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    /* Add :hover styles as needed */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #lesson-container {
+        width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    .exercise label {
+        font-size: 14px;
+    }
 }

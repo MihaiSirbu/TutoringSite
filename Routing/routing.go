@@ -153,7 +153,7 @@ func CreateExercise(w http.ResponseWriter, r *http.Request){
         return
     }
 
-	newExercise := models.Exercise{LessonID:req.LessonID, ExerciseContent:req.ExerciseContent, Answer:req.Answer}
+	newExercise := models.Exercise{ExerciseNumber:req.ExerciseNumber,LessonID:req.LessonID, ExerciseContent:req.ExerciseContent, Answer:req.Answer}
 	result := initializers.DB.Create(&newExercise)
 	if result.Error != nil{
 		log.Fatal("StatusInternalServerError")
@@ -162,7 +162,6 @@ func CreateExercise(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode(newExercise)
-
 
     
 }
@@ -213,9 +212,7 @@ func GetLesson(w http.ResponseWriter, r *http.Request){
         return
     }
 
-	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(lesson)
+	renderTemplate(w,"templates/singleLessonPage.html",lesson)
 	
 }
 

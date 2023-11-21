@@ -3,32 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson Page</title> <!-- Removed Go template code from title -->
+    <title>{{ .Title }}</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    
 </head>
 <body>
     <div id="lesson-container">
         <header>
-            <h1 id="lesson-title"></h1> <!-- Removed Go template code -->
-            <date id="lesson-date"></date> <!-- Removed Go template code -->
+            <h1 id="lesson-title">{{ .Title }}</h1>
+            <date id="lesson-date">{{ .LessonDate }}</date>
         </header>
         <section id="lesson-overview">
             <h2>Lesson Overview</h2>
-            <p id="lesson-description"></p> <!-- Removed Go template code -->
+            <p id="lesson-description">{{ .Description }}</p>
         </section>
         <section id="exercises">
             <h2>Exercises</h2>
-            <!-- Exercise content will be added by JavaScript -->
-        </section>
-        <section id="feedback-section">
-            <h2>Questions or Feedback</h2>
-            <form id="feedback-form">
-                <input type="text" id="student-name" name="student-name" placeholder="Your Name">
-                <textarea id="student-question" name="student-question" placeholder="Your Question"></textarea>
-                <button type="submit">Submit</button>
-            </form>
+                <div class="exercises-container">
+                    {{ range $index, $exercise := .Exercises }}
+                    <div class="exercise">
+                        <span class="exercise-number">{{ $exercise.ExerciseNumber }}.</span>
+                        <span class="exercise-content">$$ {{ $exercise.ExerciseContent }} $$</span>
+                        <div class="response-area">
+                            <input type="text" id="UserAns{{ $index }}" class="answer-input" placeholder="Your answer">
+                            <button class="verify-button" onclick="verifyAnswer(document.getElementById('UserAns{{ $index }}'), '{{ $exercise.Answer }}', event,$exercise.ID)">Verify</button>
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+
+
+
         </section>
     </div>
     <script src="/static/singleLesson.js"></script>

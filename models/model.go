@@ -28,7 +28,9 @@ type Lesson struct {
 
 type Exercise struct {
 	gorm.Model
+	ExerciseNumber	uint
 	LessonID    	uint	
 	ExerciseContent string
 	Answer          string
+	Status			string
 }
